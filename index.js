@@ -24,6 +24,25 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api/whoami", function (req, res) {
+  // Extract IP address
+  const ipAddress = req.ip.includes("::ffff:")
+    ? req.ip.split("::ffff:")[1]
+    : req.ip;
+
+  // Extract language from the 'Accept-Language' header
+  const language = req.headers["accept-language"];
+
+  // Extract software (user-agent) from the 'User-Agent' header
+  const software = req.headers["user-agent"];
+
+  // Respond with the required information
+  res.json({
+    ipaddress: ipAddress,
+    language: language,
+    software: software,
+  });
+});
 
 app.get("/api/:date?", function (req, res) {
   const dateParam = req.params.date; // Extract the "date" parameter from the route
@@ -39,7 +58,9 @@ app.get("/api/:date?", function (req, res) {
     return res.json({ error: "Invalid Date" });
   }
 
-  res.json({"unix":date.getTime(), "utc":date.toUTCString()}); // Respond with a message containing the date
+  res.json({
+    "unix":date.getTime(),
+    "utc":date.toUTCString()}); // Respond with a message containing the date
 });
 
 // Listen on port set in environment variable or default to 3000
